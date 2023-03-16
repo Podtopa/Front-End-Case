@@ -1,16 +1,15 @@
 import React, {useEffect, useState} from "react";
 import './App.css';
 import {useCourses} from "../../hooks/use-courses";
+import {AllCoursesPage} from "../all-courses-page/AllCoursesPage";
 
 function App() {
   const courses = useCourses();
   console.log(courses);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        Hello
-      </header>
+    <div>
+      <AllCoursesPage/>
     </div>
   );
 }
