@@ -3,6 +3,7 @@ import {Link, useParams} from "react-router-dom";
 import {Layout, Card, Col, Row, Image, Space, Button, Spin, Alert} from 'antd';
 import Hls from "hls.js";
 import {useCourse} from "../../hooks/use-course";
+import {getDuration} from "../../utils";
 
 const {Header, Content, Footer} = Layout;
 
@@ -144,7 +145,7 @@ export function CoursePage() {
                   }
                 >
                   <Row align={"middle"}>
-                    <Col flex={1}>Duration: {currentLesson.duration}</Col>
+                    <Col flex={1}>Duration: {getDuration(currentLesson.duration)}</Col>
                   </Row>
                 </Card>
               </Col>

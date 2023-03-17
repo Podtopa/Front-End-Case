@@ -1,6 +1,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {Card, Col, Row, Rate, Tag} from 'antd';
+import {getDuration} from "../../utils";
 
 export function CardItem({course}) {
   return (
@@ -9,12 +10,16 @@ export function CardItem({course}) {
       minWidth: '320px',
     }}>
       <Link to={`/course/${course.id}`}>
-        <Card title={course.title}
-              bordered={false}
-              cover={<img alt="course" src={`${course.previewImageLink}/cover.webp`} />}
+        <Card
+          title={course.title}
+          bordered={false}
+          cover={<img alt="course" src={`${course.previewImageLink}/cover.webp`} />}
+          style={{
+            height: '465px',
+          }}
         >
           <Row align={"middle"}>
-            <Col flex={1}>Duration: {course.duration}</Col>
+            <Col flex={1}>Duration: {getDuration(course.duration)}</Col>
             <Col flex={1}><Rate disabled defaultValue={course.rating}/></Col>
           </Row>
           {!!course.meta?.skills?.length && (
