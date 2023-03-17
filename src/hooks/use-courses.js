@@ -5,10 +5,12 @@ import coursesMock from "../mocks/courses.json";
 
 export function useCourses () {
   const [courses, setCourses] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const token = useToken();
 
   useEffect(() => {
-    if (token && !courses.length) {
+    if (token && !courses?.length) {
       fetch(`${API_PREFIX}/core/preview-courses`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -17,16 +19,26 @@ export function useCourses () {
         .then((response) => {
           return response.json();
         })
-        .then(({courses}) => {
+        .then(({courses, message}) => {
+          if (message) {
+            setError(message);
+            return;
+          }
+
           setCourses(courses);
         })
-        .catch(() => {
+        .catch((error) => {
           if (USE_MOCKS === true) {
             setCourses(coursesMock.courses);
           }
+
+          setError(error.message);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   }, [token, courses]);
 
-  return courses;
+  return [courses, isLoading, error];
 }

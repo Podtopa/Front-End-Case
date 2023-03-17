@@ -8,8 +8,6 @@ export function useToken() {
     if (!token) {
       fetch(`${API_PREFIX}/auth/anonymous?platform=subscriptions`)
         .then((response) => {
-          console.log(response)
-
           return response.json();
         })
         .then(({token}) => {

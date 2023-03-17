@@ -1,16 +1,16 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {useCourse} from "../../hooks/use-course";
-import {Layout, Card, Col, Row, Image, Space, Button} from 'antd';
+import {Layout, Card, Col, Row, Image, Space, Button, Spin, Alert} from 'antd';
 import { useParams } from 'react-router-dom';
 
 const {Header, Content, Footer} = Layout;
 
 export function CoursePage() {
   const {id, lessonId} = useParams();
-  const course = useCourse(id);
+  const [course, isLoading, error] = useCourse(id);
   const currentLesson = course?.lessons?.find(({id}) => id === lessonId) ?? course?.lessons?.find(({status}) => status === 'unlocked');
-
+  console.log(course)
   const isActive = ({id}) => currentLesson.id === id;
   const isDisabled = ({status}) => status === "locked";
 
@@ -44,14 +44,38 @@ export function CoursePage() {
       </Header>
 
       <Content>
-        <Space wrap style={{
-          padding: 16,
-          paddingBottom: 0,
-        }}>
-          <Button type="text" href="/">Home</Button>
-        </Space>
-        {!!course && (
+        {isLoading && (
+          <Spin
+            size="large"
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%'
+            }}
+          />
+        )}
+
+        {error && (
+          <Alert
+            message="Oops! Something Went Wrong"
+            description={error}
+            type="error"
+            style={{
+              padding: 18,
+              margin: 18,
+            }}
+          />
+        )}
+
+        {!isLoading && course && (
           <>
+            <Space wrap style={{
+              padding: 16,
+              paddingBottom: 0,
+            }}>
+              <Button type="text" href="/">Home</Button>
+            </Space>
+
             <Row
               justify="center"
               style={{

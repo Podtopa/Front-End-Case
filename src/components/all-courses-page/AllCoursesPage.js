@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {useCourses} from "../../hooks/use-courses";
-import {Layout, Row, Col, Pagination} from 'antd';
+import {Layout, Row, Col, Pagination, Spin, Alert} from 'antd';
 import {CardItem} from "./CardItem";
 
 const {Header, Content, Footer} = Layout;
@@ -8,7 +8,7 @@ const {Header, Content, Footer} = Layout;
 const PAGE_SIZE = 10;
 
 export function AllCoursesPage() {
-  const courses = useCourses();
+  const [courses, isLoading, error] = useCourses();
   const [pagination, setPagination] = useState({
     current: 1,
     minIndex: 0,
@@ -44,32 +44,58 @@ export function AllCoursesPage() {
           padding: '0 50px',
         }}
       >
-        <Row
-          gutter={16}
-          justify="center"
-          style={{
-            padding: '48px 0',
-          }}
-        >
-          {courses.map((course, index) =>
-            index >= pagination.minIndex &&
-            index < pagination.maxIndex && (
-              <CardItem key={course.id} course={course}/>
-            )
-          )}
-        </Row>
-      </Content>
-      <Row justify="center">
-        <Col>
-          <Pagination
-            pageSize={PAGE_SIZE}
-            current={pagination.current}
-            total={courses.length}
-            onChange={handleChange}
-            style={{ bottom: "0px" }}
+        {isLoading && (
+          <Spin
+            size="large"
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%'
+            }}
           />
-        </Col>
-      </Row>
+        )}
+        {error && (
+          <Alert
+            message="Oops! Something Went Wrong"
+            description={error}
+            type="error"
+            style={{
+              padding: 18,
+              margin: 18,
+            }}
+          />
+        )}
+
+        {!isLoading && !!courses?.length && (
+          <>
+            <Row
+              gutter={16}
+              justify="center"
+              style={{
+                padding: '48px 0',
+              }}
+            >
+              {courses.map((course, index) =>
+                  index >= pagination.minIndex &&
+                  index < pagination.maxIndex && (
+                    <CardItem key={course.id} course={course}/>
+                  )
+              )}
+            </Row>
+            <Row justify="center">
+              <Col>
+                <Pagination
+                  pageSize={PAGE_SIZE}
+                  current={pagination.current}
+                  total={courses.length}
+                  onChange={handleChange}
+                  style={{ bottom: "0px" }}
+                />
+              </Col>
+            </Row>
+          </>
+        )}
+      </Content>
       <Footer
         style={{
           textAlign: 'center',
