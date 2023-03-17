@@ -1,11 +1,13 @@
 import React from "react";
 import {useCourses} from "../../hooks/use-courses";
-import {Layout, Card, Col, Row} from 'antd';
+import {Layout, Card, Col, Row, Image, Pagination, Rate, Tag } from 'antd';
+import {CardItem} from "./CardItem";
 const {Header, Content, Footer} = Layout;
 
 export function AllCoursesPage() {
   const courses = useCourses();
   console.log(courses);
+
 
   return (
     <Layout style={{
@@ -32,16 +34,11 @@ export function AllCoursesPage() {
           padding: '48px 0',
         }}>
           {courses.map(course => (
-            <Col span={8} style={{
-              padding: 16,
-            }}>
-              <Card title={course.title} bordered={false}>
-                Card content
-              </Card>
-            </Col>
+            <CardItem course={course}/>
           ))}
         </Row>
       </Content>
+      <Pagination defaultCurrent={1} total={30} />
       <Footer
         style={{
           textAlign: 'center',
