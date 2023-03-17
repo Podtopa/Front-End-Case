@@ -6,6 +6,7 @@ export function CardItem({course}) {
   return (
     <Col span={8} style={{
       padding: 16,
+      minWidth: '320px',
     }}>
       <Link to={`/course/${course.id}`}>
         <Card title={course.title}

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {useCourses} from "../../hooks/use-courses";
-import {Layout, Row, Pagination} from 'antd';
+import {Layout, Row, Col, Pagination} from 'antd';
 import {CardItem} from "./CardItem";
 
 const {Header, Content, Footer} = Layout;
@@ -44,9 +44,13 @@ export function AllCoursesPage() {
           padding: '0 50px',
         }}
       >
-        <Row gutter={16} style={{
-          padding: '48px 0',
-        }}>
+        <Row
+          gutter={16}
+          justify="center"
+          style={{
+            padding: '48px 0',
+          }}
+        >
           {courses.map((course, index) =>
             index >= pagination.minIndex &&
             index < pagination.maxIndex && (
@@ -55,13 +59,17 @@ export function AllCoursesPage() {
           )}
         </Row>
       </Content>
-      <Pagination
-        pageSize={PAGE_SIZE}
-        current={pagination.current}
-        total={courses.length}
-        onChange={handleChange}
-        style={{ bottom: "0px" }}
-      />
+      <Row justify="center">
+        <Col>
+          <Pagination
+            pageSize={PAGE_SIZE}
+            current={pagination.current}
+            total={courses.length}
+            onChange={handleChange}
+            style={{ bottom: "0px" }}
+          />
+        </Col>
+      </Row>
       <Footer
         style={{
           textAlign: 'center',

@@ -52,46 +52,58 @@ export function CoursePage() {
         </Space>
         {!!course && (
           <>
-            <Col span={8} style={{
+            <Row
+              justify="center"
+              style={{
+                padding: 16,
+              }}
+            >
+              <Col>
+                <Card
+                  title={currentLesson.title}
+                  style={{width: '70vw'}}
+                  cover={<img alt="course" src={`${currentLesson.previewImageLink}/lesson-${currentLesson.order}.webp`}/>} //to do change on video
+                >
+                  <Row align={"middle"}>
+                    <Col flex={1}>Duration: {currentLesson.duration}</Col>
+                  </Row>
+                </Card>
+              </Col>
+            </Row>
+
+            <Col style={{
               padding: 16,
             }}>
               <Card
-                title={currentLesson.title}
-                style={{width: '70vw'}}
-                cover={<img alt="course" src={`${currentLesson.previewImageLink}/lesson-${currentLesson.order}.webp`}/>} //to do change on video
+                title="Lessons"
+                style={{
+                  textAlign: 'center',
+                }}
               >
-                <Row align={"middle"}>
-                  <Col flex={1}>Duration: {currentLesson.duration}</Col>
-                </Row>
+                {course?.lessons?.map(lesson => (
+                  <Card.Grid
+                    key={lesson.id}
+                    style={{
+                      width: '25%',
+                      minWidth: '320px',
+                      margin: 'auto',
+                      textAlign: 'center',
+                      background: getBackground(lesson),
+                    }}
+                    hoverable={!isDisabled(lesson)}
+                  >
+                    <LessonLink lesson={lesson}>
+                      <Image
+                        alt={lesson.title}
+                        src={`${lesson.previewImageLink}/lesson-${lesson.order}.webp`}
+                        preview={false}
+                      />
+                      {lesson.title}
+                    </LessonLink>
+                  </Card.Grid>
+                ))}
               </Card>
             </Col>
-            <Card
-              title="Lessons"
-              style={{
-                textAlign: 'center',
-              }}
-            >
-              {course?.lessons?.map(lesson => (
-                <Card.Grid
-                  key={lesson.id}
-                  style={{
-                    width: '25%',
-                    textAlign: 'center',
-                    background: getBackground(lesson),
-                  }}
-                  hoverable={!isDisabled(lesson)}
-                >
-                  <LessonLink lesson={lesson}>
-                    <Image
-                      alt={lesson.title}
-                      src={`${lesson.previewImageLink}/lesson-${lesson.order}.webp`}
-                      preview={false}
-                    />
-                    {lesson.title}
-                  </LessonLink>
-                </Card.Grid>
-              ))}
-            </Card>
           </>
         )}
       </Content>
