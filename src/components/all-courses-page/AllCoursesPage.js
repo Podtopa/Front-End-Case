@@ -1,7 +1,8 @@
 import React, {useState} from "react";
 import {useCourses} from "../../hooks/use-courses";
-import {Layout, Card, Col, Row, Image, Pagination, Rate, Tag } from 'antd';
+import {Layout, Row, Pagination} from 'antd';
 import {CardItem} from "./CardItem";
+
 const {Header, Content, Footer} = Layout;
 
 const PAGE_SIZE = 10;

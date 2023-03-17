@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Col, Row, Rate, Tag } from 'antd';
+import {Card, Col, Row, Rate, Tag} from 'antd';
 
 export function CardItem({course}) {
   return (
