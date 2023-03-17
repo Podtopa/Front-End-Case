@@ -8,7 +8,7 @@ export function useCourse(id) {
   const token = useToken();
 
   useEffect(() => {
-    if (token && !course) {
+    if (id && token && !course) {
       fetch(`${API_PREFIX}/core/preview-courses/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -26,7 +26,7 @@ export function useCourse(id) {
           }
         });
     }
-  }, [token, course]);
+  }, [id, token, course]);
 
   return course;
 }

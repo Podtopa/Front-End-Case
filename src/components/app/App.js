@@ -6,13 +6,14 @@ import {
 } from "react-router-dom";
 import './App.css';
 import {AllCoursesPage} from "../all-courses-page/AllCoursesPage";
+import {CoursePage} from "../coure-page/CoursePage";
 
 function App() {
   return (
     <Router>
       <Switch>
         <Route path="/course/:id">
-          123
+          <CoursePage/>
         </Route>
         <Route path="/">
           <AllCoursesPage />
