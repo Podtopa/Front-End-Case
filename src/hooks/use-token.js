@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {API_PREFIX} from "../const";
 
 export function useToken() {
@@ -16,7 +16,7 @@ export function useToken() {
           setToken(token);
         });
     }
-  }, []);
+  }, [token]);
 
   return token;
 }

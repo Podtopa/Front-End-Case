@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 import {useCourse} from "../../hooks/use-course";
 import {Layout, Card, Col, Row, Image, Space, Button} from 'antd';
 import { useParams } from 'react-router-dom';
@@ -6,13 +7,31 @@ import { useParams } from 'react-router-dom';
 const {Header, Content, Footer} = Layout;
 
 export function CoursePage() {
-  const {id} = useParams();
+  const {id, lessonId} = useParams();
   const course = useCourse(id);
+  const currentLesson = course?.lessons?.find(({id}) => id === lessonId) ?? course?.lessons?.find(({status}) => status === 'unlocked');
 
+  const isActive = ({id}) => currentLesson.id === id;
   const isDisabled = ({status}) => status === "locked";
 
+  const LessonLink = ({ lesson, children }) => (
+    isDisabled(lesson)
+      ? <>{children}</>
+      : <Link to={`/course/${course.id}/lesson/${lesson.id}`}>{children}</Link>
+  );
+
+  const getBackground = (lesson) => {
+    if (isActive(lesson)) {
+      return 'lightblue';
+    }
+
+    return isDisabled(lesson) ? 'lightgray' : 'white';
+  }
+
   return(
-    <Layout>
+    <Layout style={{
+      minHeight: '100vh',
+    }}>
       <Header
         style={{
           position: 'sticky',
@@ -37,12 +56,12 @@ export function CoursePage() {
               padding: 16,
             }}>
               <Card
-                title={course.lessons[0].title}
+                title={currentLesson.title}
                 style={{width: '70vw'}}
-                cover={<img alt="course" src={`${course.lessons[0].previewImageLink}/lesson-${course.lessons[0].order}.webp`}/>} //to do change on video
+                cover={<img alt="course" src={`${currentLesson.previewImageLink}/lesson-${currentLesson.order}.webp`}/>} //to do change on video
               >
                 <Row align={"middle"}>
-                  <Col flex={1}>Duration: {course.lessons[0].duration}</Col>
+                  <Col flex={1}>Duration: {currentLesson.duration}</Col>
                 </Row>
               </Card>
             </Col>
@@ -58,16 +77,18 @@ export function CoursePage() {
                   style={{
                     width: '25%',
                     textAlign: 'center',
-                    background: isDisabled(lesson) ? 'lightgray' : 'white'
+                    background: getBackground(lesson),
                   }}
                   hoverable={!isDisabled(lesson)}
                 >
-                  <Image
-                    alt={lesson.title}
-                    src={`${lesson.previewImageLink}/lesson-${lesson.order}.webp`}
-                    preview={false}
-                  />
-                  {lesson.title}
+                  <LessonLink lesson={lesson}>
+                    <Image
+                      alt={lesson.title}
+                      src={`${lesson.previewImageLink}/lesson-${lesson.order}.webp`}
+                      preview={false}
+                    />
+                    {lesson.title}
+                  </LessonLink>
                 </Card.Grid>
               ))}
             </Card>

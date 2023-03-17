@@ -12,7 +12,7 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/course/:id">
+        <Route path={["/course/:id/lesson/:lessonId", "/course/:id"]}>
           <CoursePage/>
         </Route>
         <Route path="/">
