@@ -1,18 +1,48 @@
-import React from "react";
-import {Link} from "react-router-dom";
-import {useCourse} from "../../hooks/use-course";
+import React, {useRef, useEffect, useState} from "react";
+import {Link, useParams} from "react-router-dom";
 import {Layout, Card, Col, Row, Image, Space, Button, Spin, Alert} from 'antd';
-import { useParams } from 'react-router-dom';
+import Hls from "hls.js";
+import {useCourse} from "../../hooks/use-course";
 
 const {Header, Content, Footer} = Layout;
 
 export function CoursePage() {
   const {id, lessonId} = useParams();
   const [course, isLoading, error] = useCourse(id);
-  const currentLesson = course?.lessons?.find(({id}) => id === lessonId) ?? course?.lessons?.find(({status}) => status === 'unlocked');
-  console.log(course)
+
+  const videoRef = useRef();
+  const [playerStatus, setPlayerStatus] = useState('loading');
+
+  const currentLesson = course?.lessons?.find(({id}) => id === lessonId)
+    ?? course?.lessons?.find(({status}) => status === 'unlocked');
+
   const isActive = ({id}) => currentLesson.id === id;
   const isDisabled = ({status}) => status === "locked";
+
+  useEffect(() => {
+    if (videoRef.current && Hls.isSupported()) {
+      const hls = new Hls({
+        debug: true,
+      });
+      hls.loadSource(currentLesson.link);
+      hls.attachMedia(videoRef.current);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        videoRef.current.play();
+        setPlayerStatus('playing');
+      });
+
+      hls.on(Hls.Events.ERROR, (event, error) => {
+        if (error?.type === "networkError") {
+          setPlayerStatus('error');
+        }
+      });
+
+      return () => {
+        hls.destroy();
+      }
+    }
+  },[videoRef, currentLesson])
 
   const LessonLink = ({ lesson, children }) => (
     isDisabled(lesson)
@@ -73,7 +103,7 @@ export function CoursePage() {
               padding: 16,
               paddingBottom: 0,
             }}>
-              <Button type="text" href="/">Home</Button>
+              <Button type="text" href="/">← Home</Button>
             </Space>
 
             <Row
@@ -86,7 +116,32 @@ export function CoursePage() {
                 <Card
                   title={currentLesson.title}
                   style={{width: '70vw'}}
-                  cover={<img alt="course" src={`${currentLesson.previewImageLink}/lesson-${currentLesson.order}.webp`}/>} //to do change on video
+                  cover={
+                    <>
+                      {(playerStatus === 'loading' || playerStatus === 'playing') && (
+                        <video controls ref={videoRef} />
+                      )}
+
+                      {playerStatus === 'error' && (
+                        <>
+                          <img
+                            alt={currentLesson.title}
+                            src={`${currentLesson.previewImageLink}/lesson-${currentLesson.order}.webp`}
+                          />
+                          <Alert
+                            message="No data found for resource with given identifier"
+                            type="error"
+                            style={{
+                              position: 'absolute',
+                              bottom: '72px',
+                              width: 'calc(100% - 32px)',
+                              margin: '16px'
+                            }}
+                          />
+                        </>
+                      )}
+                    </>
+                  }
                 >
                   <Row align={"middle"}>
                     <Col flex={1}>Duration: {currentLesson.duration}</Col>
