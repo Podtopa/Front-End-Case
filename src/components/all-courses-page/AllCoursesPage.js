@@ -1,13 +1,26 @@
-import React from "react";
+import React, {useState} from "react";
 import {useCourses} from "../../hooks/use-courses";
 import {Layout, Card, Col, Row, Image, Pagination, Rate, Tag } from 'antd';
 import {CardItem} from "./CardItem";
 const {Header, Content, Footer} = Layout;
 
+const PAGE_SIZE = 10;
+
 export function AllCoursesPage() {
   const courses = useCourses();
-  console.log(courses);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    minIndex: 0,
+    maxIndex: PAGE_SIZE,
+  });
 
+  const handleChange = (page) => {
+    setPagination({
+      current: page,
+      minIndex: (page - 1) * PAGE_SIZE,
+      maxIndex: page * PAGE_SIZE
+    });
+  };
 
   return (
     <Layout style={{
@@ -33,12 +46,21 @@ export function AllCoursesPage() {
         <Row gutter={16} style={{
           padding: '48px 0',
         }}>
-          {courses.map(course => (
-            <CardItem course={course}/>
-          ))}
+          {courses.map((course, index) =>
+            index >= pagination.minIndex &&
+            index < pagination.maxIndex && (
+              <CardItem key={course.id} course={course}/>
+            )
+          )}
         </Row>
       </Content>
-      <Pagination defaultCurrent={1} total={30} />
+      <Pagination
+        pageSize={PAGE_SIZE}
+        current={pagination.current}
+        total={courses.length}
+        onChange={handleChange}
+        style={{ bottom: "0px" }}
+      />
       <Footer
         style={{
           textAlign: 'center',

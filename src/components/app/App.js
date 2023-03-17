@@ -4,9 +4,6 @@ import {useCourses} from "../../hooks/use-courses";
 import {AllCoursesPage} from "../all-courses-page/AllCoursesPage";
 
 function App() {
-  const courses = useCourses();
-  console.log(courses);
-
   return (
     <div>
       <AllCoursesPage/>

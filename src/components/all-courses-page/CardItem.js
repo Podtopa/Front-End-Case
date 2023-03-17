@@ -18,7 +18,7 @@ export function CardItem({course}) {
           <Row>
             <Col flex={1}>
               {course.meta?.skills?.map(skill => (
-                <Tag color="blue" style={{
+                <Tag key={skill} color="blue" style={{
                   margin: 4,
                 }}>
                   {skill}
