@@ -1,17 +1,17 @@
 import {useEffect, useState} from "react";
 import {API_PREFIX, USE_MOCKS} from "../const";
-import {useToken} from "./use-token";
-import coursesMock from "../mocks/courses.json";
+import {useToken} from "./useToken";
+import courseMock from "../mocks/course.json";
 
-export function useCourses () {
-  const [courses, setCourses] = useState([]);
+export function useCourse(id) {
+  const [course, setCourse] = useState();
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const token = useToken();
 
   useEffect(() => {
-    if (token && !courses?.length) {
-      fetch(`${API_PREFIX}/core/preview-courses`, {
+    if (id && token && !course) {
+      fetch(`${API_PREFIX}/core/preview-courses/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
@@ -19,17 +19,17 @@ export function useCourses () {
         .then((response) => {
           return response.json();
         })
-        .then(({courses, message}) => {
-          if (message) {
-            setError(message);
+        .then((data) => {
+          if (data.message) {
+            setError(data.message);
             return;
           }
 
-          setCourses(courses);
+          setCourse(data);
         })
         .catch((error) => {
           if (USE_MOCKS === true) {
-            setCourses(coursesMock.courses);
+            setCourse(courseMock);
           }
 
           setError(error.message);
@@ -38,7 +38,7 @@ export function useCourses () {
           setLoading(false);
         });
     }
-  }, [token, courses]);
+  }, [id, token, course]);
 
-  return [courses, isLoading, error];
+  return [course, isLoading, error];
 }

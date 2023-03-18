@@ -2,7 +2,8 @@ import React, {useRef, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import {Layout, Card, Col, Row, Image, Space, Button, Spin, Alert} from 'antd';
 import Hls from "hls.js";
-import {useCourse} from "../../hooks/use-course";
+import {useCourse} from "../../hooks/useCourse";
+import {useLocalStorage} from "../../hooks/useLocalStorage";
 import {getDuration} from "../../utils";
 
 const {Header, Content, Footer} = Layout;
@@ -13,9 +14,16 @@ export function CoursePage() {
 
   const videoRef = useRef();
   const [playerStatus, setPlayerStatus] = useState('loading');
+  const [videoState, setVideoState] = useLocalStorage('video-player-state');
 
   const currentLesson = course?.lessons?.find(({id}) => id === lessonId)
     ?? course?.lessons?.find(({status}) => status === 'unlocked');
+
+  const videoStateById = currentLesson?.id && videoState?.[currentLesson?.id] ? Number(videoState?.[currentLesson?.id]) : 0;
+  const setVideoStateById = (value) => setVideoState({
+    ...(videoState || {}),
+    [currentLesson?.id]: value,
+  })
 
   const isActive = ({id}) => currentLesson.id === id;
   const isDisabled = ({status}) => status === "locked";
@@ -29,8 +37,15 @@ export function CoursePage() {
       hls.attachMedia(videoRef.current);
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        videoRef.current.play();
-        setPlayerStatus('playing');
+        // added setTimeout to avoid error with video player buffering
+        setTimeout(() => {
+          if (videoRef.current && videoStateById) {
+            videoRef.current.currentTime = videoStateById;
+          }
+
+          videoRef.current.play();
+          setPlayerStatus('playing');
+        }, 1500)
       });
 
       hls.on(Hls.Events.ERROR, (event, error) => {
@@ -40,6 +55,10 @@ export function CoursePage() {
       });
 
       return () => {
+        if (!!videoRef.current?.currentTime) {
+          setVideoStateById(videoRef.current?.currentTime);
+        }
+
         hls.destroy();
       }
     }

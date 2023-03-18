@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {useCourses} from "../../hooks/use-courses";
+import {useCourses} from "../../hooks/useCourses";
 import {Layout, Row, Col, Pagination, Spin, Alert} from 'antd';
 import {CardItem} from "./CardItem";
 
