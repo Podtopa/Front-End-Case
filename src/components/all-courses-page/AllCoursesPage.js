@@ -35,7 +35,8 @@ export function AllCoursesPage() {
           width: '100%',
           color: 'white',
         }}
-      > Front-End Case
+      >
+        Front-End Case
       </Header>
 
       <Content

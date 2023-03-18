@@ -1,6 +1,6 @@
 import React, {useRef, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
-import {Layout, Card, Col, Row, Image, Space, Button, Spin, Alert} from 'antd';
+import {Layout, Card, Col, Row, Image, Space, Button, Spin, Alert, Progress, Rate} from 'antd';
 import Hls from "hls.js";
 import {useCourse} from "../../hooks/useCourse";
 import {useLocalStorage} from "../../hooks/useLocalStorage";
@@ -28,6 +28,12 @@ export function CoursePage() {
   const isActive = ({id}) => currentLesson.id === id;
   const isDisabled = ({status}) => status === "locked";
 
+  const getVideoProgress = (lesson) => {
+    const currentProgress = videoState?.[lesson?.id] ? Number(videoState?.[lesson?.id]) : 0;
+
+    return Math.floor(currentProgress / lesson.duration * 100);
+  }
+
   useEffect(() => {
     if (videoRef.current && Hls.isSupported()) {
       const hls = new Hls({
@@ -43,7 +49,7 @@ export function CoursePage() {
             videoRef.current.currentTime = videoStateById;
           }
 
-          videoRef.current.play();
+          videoRef.current?.play();
           setPlayerStatus('playing');
         }, 1500)
       });
@@ -125,6 +131,36 @@ export function CoursePage() {
             }}>
               <Button type="text" href="/">← Home</Button>
             </Space>
+            <Row
+              justify="start"
+              align="middle"
+              style={{
+                paddingLeft: 32,
+              }}
+            >
+              <Col flex={3}>
+                <h1>{course.title}</h1>
+              </Col>
+              <Col flex={1}>
+                <Rate disabled defaultValue={course.rating}/>
+              </Col>
+            </Row>
+            <Row
+              justify="start"
+              style={{
+                paddingLeft: 32,
+              }}
+            >
+              <Col>
+                <h3
+                  style={{
+                    margin: 0,
+                  }}
+                >
+                  {course.description}
+                </h3>
+              </Col>
+            </Row>
 
             <Row
               justify="center"
@@ -197,6 +233,7 @@ export function CoursePage() {
                         src={`${lesson.previewImageLink}/lesson-${lesson.order}.webp`}
                         preview={false}
                       />
+                      <Progress percent={getVideoProgress(lesson)} status="active" />
                       {lesson.title}
                     </LessonLink>
                   </Card.Grid>
